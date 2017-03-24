@@ -19,8 +19,8 @@ layer {
 	type: "Convolution"
 	bottom: "data"
 	top: "conv1"
-	param { lr_mult: 1.0 }
-	param { lr_mult: 2.0 }
+	param { lr_mult: 0 } #1.0
+	param { lr_mult: 0 } #2.0
 	convolution_param {
 		num_output: 96
 		kernel_size: 7
@@ -64,8 +64,8 @@ layer {
 	type: "Convolution"
 	bottom: "pool1"
 	top: "conv2"
-	param { lr_mult: 1.0 }
-	param { lr_mult: 2.0 }
+	param { lr_mult: 0 } #1.0
+	param { lr_mult: 0 } #2.0
 	convolution_param {
 		num_output: 256
 		kernel_size: 5
@@ -109,8 +109,8 @@ layer {
 	type: "Convolution"
 	bottom: "pool2"
 	top: "conv3"
-	param { lr_mult: 1.0 }
-	param { lr_mult: 2.0 }
+	param { lr_mult: 0 } #1.0
+	param { lr_mult: 0 } #2.0
 	convolution_param {
 		num_output: 384  #384
 		kernel_size: 3
@@ -129,8 +129,8 @@ layer {
 	type: "Convolution"
 	bottom: "conv3"
 	top: "conv4"
-	param { lr_mult: 1.0 }
-	param { lr_mult: 2.0 }
+	param { lr_mult: 0 } #1.0
+	param { lr_mult: 0 } #2.0
 	convolution_param {
 		num_output: 384
 		kernel_size: 3
@@ -149,8 +149,8 @@ layer {
 	type: "Convolution"
 	bottom: "conv4"
 	top: "conv5"
-	param { lr_mult: 1.0 }
-	param { lr_mult: 2.0 }
+	param { lr_mult: 0 } #1.0
+	param { lr_mult: 0 } #2.0
 	convolution_param {
 		num_output: 256
 		kernel_size: 3
@@ -172,12 +172,12 @@ layer {
   type: "Convolution"
   bottom: "conv5"
   top: "rpn/output"
-  param { lr_mult: 1.0 }
-  param { lr_mult: 2.0 }
+  param { lr_mult: 1.0 } #1.0
+  param { lr_mult: 2.0 } #2.0
   convolution_param {
     num_output: 256
     kernel_size: 3 pad: 1 stride: 1
-    weight_filler { type: "gaussian" std: 0.01 }
+    weight_filler { type: "gaussian" std: 0.01 } #trained from scratch
     bias_filler { type: "constant" value: 0 }
   }
 }
@@ -193,8 +193,8 @@ layer {
 #  type: "Convolution"
 #  bottom: "conv5"
 #  top: "rpn_conv/3x3"
-#  param { lr_mult: 1.0 }
-#  param { lr_mult: 2.0 }
+#  param { lr_mult: 1.0 } #1.0
+#  param { lr_mult: 2.0 } #2.0
 #  convolution_param {
 #    num_output: 192
 #    kernel_size: 3 pad: 1 stride: 1
@@ -207,8 +207,8 @@ layer {
 #  type: "Convolution"
 #  bottom: "conv5"
 #  top: "rpn_conv/5x5"
-#  param { lr_mult: 1.0 }
-#  param { lr_mult: 2.0 }
+#  param { lr_mult: 0 }
+#  param { lr_mult: 0 }
 #  convolution_param {
 #    num_output: 64
 #    kernel_size: 5 pad: 2 stride: 1
@@ -235,8 +235,8 @@ layer {
   type: "Convolution"
   bottom: "rpn/output"
   top: "rpn_cls_score"
-  param { lr_mult: 1.0 }
-  param { lr_mult: 2.0 }
+  param { lr_mult: 1.0 } #1.0
+  param { lr_mult: 2.0 } #2.0
   convolution_param {
     num_output: 18   # 2(bg/fg) * 9(anchors)
     kernel_size: 1 pad: 0 stride: 1
@@ -249,8 +249,8 @@ layer {
   type: "Convolution"
   bottom: "rpn/output"
   top: "rpn_bbox_pred"
-  param { lr_mult: 1.0 }
-  param { lr_mult: 2.0 }
+  param { lr_mult: 1.0 } #1.0
+  param { lr_mult: 2.0 } #2.0
   convolution_param {
     num_output: 36   # 4 * 9(anchors)
     kernel_size: 1 pad: 0 stride: 1
@@ -384,8 +384,8 @@ layer {
   type: "InnerProduct"
   bottom: "roi_pool_conv5"
   top: "fc6"
-  param { lr_mult: 1.0 }
-  param { lr_mult: 2.0 }
+  param { lr_mult: 1.0 } #1.0
+  param { lr_mult: 2.0 } #2.0
   inner_product_param {
     num_output: 4096
   }
@@ -411,8 +411,8 @@ layer {
   type: "InnerProduct"
   bottom: "fc6"
   top: "fc7"
-  param { lr_mult: 1.0 }
-  param { lr_mult: 2.0 }
+  param { lr_mult: 0 } #1.0
+  param { lr_mult: 0 } #2.0
   inner_product_param {
     num_output: 4096
   }
@@ -434,12 +434,12 @@ layer {
   }
 }
 layer {
-  name: "cls_score"
+  name: "cls_score" #SKG changed from cls_score 
   type: "InnerProduct"
   bottom: "fc7"
   top: "cls_score"
-  param { lr_mult: 1.0 }
-  param { lr_mult: 2.0 }
+  param { lr_mult: .01 } #1.0
+  param { lr_mult: .01 } #2.0
   inner_product_param {
     num_output: 2 #SKG changed from 21 
     weight_filler {
@@ -453,17 +453,17 @@ layer {
   }
 }
 layer {
-  name: "bbox_pred"
+  name: "bbox_pred" #SKG changed from bbox_pred 
   type: "InnerProduct"
   bottom: "fc7"
   top: "bbox_pred"
-  param { lr_mult: 1.0 }
-  param { lr_mult: 2.0 }
+  param { lr_mult: 1.0 } #1.0
+  param { lr_mult: 2.0 } #2.0
   inner_product_param {
     num_output: 8 #SKG changed from 84
     weight_filler {
       type: "gaussian"
-      std: 0.001
+      std: 0.001 #train
     }
     bias_filler {
       type: "constant"
